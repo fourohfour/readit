@@ -1,4 +1,4 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, redirect
 import praw
 app = Flask(__name__)
 
@@ -7,6 +7,8 @@ r = praw.Reddit(user_agent="Readit: Reddit as a newsstream viewer")
 
 @app.route('/r/<sub>')
 def readSub(sub):
+    if sub == "":
+        sub = "All"
     starthtml = """<html><head>
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu">
     </head><body><div style=\"font-family:Ubuntu\">"""
@@ -50,12 +52,11 @@ def readSub(sub):
         
 @app.route('/')
 def mainPage():
-    starthtml = "<html><body>"
-    endhtml = "</body></html>"
-    return starthtml + endhtml
+    return redirect(url_for('readSub', sub='All'))
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.1.81')
+    app.debug = True
+    app.run(host='192.168.1.113', port=80)
     r.login('readit_crawler', 'readit')
     
